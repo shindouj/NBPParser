@@ -8,6 +8,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
+/**
+ * A locale-aware converter that allows converting comma-separated floating point values
+ * to BigDecimal objects. For use with the XStream (de)serializer,
+ */
 public class LocaleAwareBigDecimalConverter extends AbstractSingleValueConverter {
     private Locale locale = Locale.getDefault();
 

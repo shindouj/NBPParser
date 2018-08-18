@@ -4,6 +4,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.math.BigDecimal;
 
+/**
+ * An exact representation of C-table record ("pozycja").
+ * Can be easily extended to be compliant with any type of CurrencyTable.
+ */
 @XStreamAlias("pozycja")
 public class CurrencyTablePosition {
     @XStreamAlias("nazwa_waluty")

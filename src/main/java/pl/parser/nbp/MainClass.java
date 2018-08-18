@@ -33,6 +33,7 @@ public class MainClass {
 
         if (args.length < 3) {
             // we expect user not to delete the default logger config from the JAR
+            // using logger because it logs to the file too, and this software might be used as a verbose app too
             Logger.error("Too little arguments! " +
                     "Usage: java pl.parser.nbp.MainClass [CURRENCY_CODE] [START_DATE] [END_DATE]");
         }
@@ -72,6 +73,7 @@ public class MainClass {
             }
         }
 
+        // calculating mean prices via streams
         BigDecimal meanBuyingPrice = currencyPrices
                 .stream()
                 .map(CurrencyTablePosition::getBuyingPrice)
@@ -87,6 +89,8 @@ public class MainClass {
                 .divide(new BigDecimal(currencyPrices.size()), RoundingMode.DOWN);
 
         // double is fine for statistical usage
+        // this can be done through streams too, but the stream implementation takes more space and is
+        // harder to read than a classic iterative approach, surprisingly
         double standardDeviation = 0;
 
         for (CurrencyTablePosition currencyPrice: currencyPrices) {
@@ -103,17 +107,24 @@ public class MainClass {
 
     private static XStream xStreamInit() throws XStreamInitException {
         try {
+            // using newer StAX XML parser for better performance with streamed data
             XStream xStream = new XStream(new StaxDriver());
+            // setting up the default security (mitigating CVE-2013-7285 RCE vulnerability)
             XStream.setupDefaultSecurity(xStream);
+            // allowing XStream to parse our own types from the XML package
             xStream.allowTypesByWildcard(new String[] {
                     CurrencyTable.class.getPackage().getName() + ".*"
             });
+            // annotation processing for XML types
             xStream.processAnnotations(CurrencyTable.class);
             xStream.processAnnotations(CurrencyTablePosition.class);
 
+            // creating the BigDecimal converter
             LocaleAwareBigDecimalConverter c = new LocaleAwareBigDecimalConverter();
+            // using German locale since it uses a comma-separated floating point number style too
             c.setLocale(Locale.GERMAN);
 
+            // registering the converter
             xStream.registerConverter(c);
 
             Logger.debug("XStream initialized successfully!");

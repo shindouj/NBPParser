@@ -7,6 +7,10 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * An exact representation of C-type CurrencyTable ("tabela_kursow") XML object.
+ * Can be easily extended to be compliant with any type of CurrencyTable.
+ */
 @XStreamAlias("tabela_kursow")
 public class CurrencyTable {
     @XStreamAlias("numer_tabeli")
@@ -47,7 +51,6 @@ public class CurrencyTable {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Currency code not found: " + currencyCode));
     }
-
     @Override
     public String toString() {
         return "CurrencyTable{" +
